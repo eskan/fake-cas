@@ -26,7 +26,7 @@
         text-align: center;
         box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.2), 0 5px 5px 0 rgba(0, 0, 0, 0.24);
       }
-      .form input {
+      #login {
         outline: 0;
         background: #f2f2f2;
         width: 100%;
@@ -52,16 +52,97 @@
       .form button:hover {
         background: #43A047;
       }
+      #prefered {
+        margin: 1em 0;
+      }
+      #prefered > button {
+        background: #904caf;
+        text-transform: none;
+        position: relative;
+        margin: 1px;
+      }
+      #prefered > button > input {
+        display: none;
+        background-color: transparent;
+        position: absolute;
+        top: 0;
+        right: 0;
+        padding: 15px;
+        outline: 0;
+        border: 0;
+        font-weight: bold;
+        color: #FFFFFF;
+        font-size: 14px;
+        cursor: pointer;
+      }
+      #prefered > button:hover > input {
+        display: inherit;
+      }
+      #prefered > button > input:hover {
+        background-color: #90ab43;
+      }
+      #addPreferedLogin {
+        display: block;
+        margin-top: 2em;
+      }
 
     </style>
     <div class="login-page">
       <div class="form">
         <h3>fake-cas</h3>
-        <form class="login-form" method="post">
-          <input type="text" name="login" placeholder="login">
+        <div id="prefered"></div>
+        <form id="form" class="login-form" method="post">
+          <input type="text" id="login" name="login" placeholder="login">
           <button>Login</button>
         </form>
+        <a href="#" id="addPreferedLogin">Add prefered login</a>
       </div>
     </div>
+    <script type="text/javascript">
+      var addPreferedLogin = function (login) {
+        var element = document.createElement("button");
+        element.innerText = login;
+        element.onclick = function () {
+          document.getElementById("login").value = login;
+          document.getElementById("form").submit();
+        };
+        var suppBtn = document.createElement("input");
+        suppBtn.type = 'button';
+        suppBtn.value = "-";
+        suppBtn.onclick = function (e) {
+          e.stopPropagation();
+          var logins = JSON.parse(window.localStorage.getItem('fake-cas:prefered-logins')) || [];
+          var found = logins.indexOf(login);
+          while (found !== -1) {
+            logins.splice(found, 1);
+            found = logins.indexOf(login);
+          }
+          window.localStorage.setItem('fake-cas:prefered-logins', JSON.stringify(logins));
+          initPrefered()
+        };
+        element.appendChild(suppBtn);
+        document.getElementById("prefered").appendChild(element);
+      };
+      var initPrefered = function (clear) {
+        var container = document.getElementById("prefered");
+        while (container.firstChild) {
+          container.removeChild(container.firstChild);
+        }
+        var logins = JSON.parse(window.localStorage.getItem('fake-cas:prefered-logins')) || [];
+        logins.forEach(function (login) {
+          addPreferedLogin(login);
+        });
+      };
+      document.getElementById("addPreferedLogin").addEventListener("click", function () {
+        var login = prompt("Please enter login");
+        if (login) {
+          addPreferedLogin(login);
+          var logins = JSON.parse(window.localStorage.getItem('fake-cas:prefered-logins')) || []
+          logins.push(login);
+          window.localStorage.setItem('fake-cas:prefered-logins', JSON.stringify(logins));
+        }
+      });
+      initPrefered();
+    </script>
   </body>
 </html>
