@@ -19,10 +19,10 @@ app.get('/login', function(req, res) {
       });
       res.end();
     } else {
-      res.sendFile(__dirname + '/already.html');
+      res.sendFile(process.cwd() + '/already.html');
     }
   } else {
-    res.sendFile(__dirname + '/form.html');
+    res.sendFile(process.cwd() + '/form.html');
   }
 });
 
@@ -38,7 +38,7 @@ app.post('/login', bodyParser.urlencoded(), function(req, res) {
     });
     res.end();
   } else {
-    res.sendFile(__dirname + '/already.html');
+    res.sendFile(process.cwd() + '/already.html');
   }
 });
 
