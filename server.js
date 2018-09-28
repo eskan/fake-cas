@@ -63,6 +63,6 @@ app.get('/validate', function(req, res) {
   res.end();
 });
 
-app.listen(3000, function() {
-  console.log('Fake-cas available on http://localhost:3000');
+app.listen( process.env.PORT || 3000, function() {
+  console.log(`Fake-cas available on http://localhost:${process.env.PORT || 3000}`);
 });
