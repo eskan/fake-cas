@@ -6,8 +6,8 @@ import cookieParser from 'cookie-parser'
 var app = express();
 app.use(cookieParser());
 
-var tickets = {};
-var cookies = {};
+var tickets:any = {};
+var cookies:any = {};
 
 app.get('/login', function(req, res) {
   if (req.cookies['fake-cas'] && cookies[req.cookies['fake-cas']]) {
@@ -54,9 +54,10 @@ app.use('/logout', function(req, res) {
 });
 
 app.get('/validate', function(req, res) {
-  if (tickets[req.query.ticket]) {
-    res.send(`yes\n${tickets[req.query.ticket]}`);
-    delete tickets[req.query.ticket];
+  const ticket = req.query.ticket as string;
+  if (ticket && tickets[ticket]) {
+    res.send(`yes\n${tickets[ticket]}`);
+    delete tickets[ticket];
   } else {
     res.send('no');
   }
