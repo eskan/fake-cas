@@ -14,3 +14,15 @@ Prefered login can be persist in localStorage
 npm i
 npm run start
 ```
+
+# Development
+
+```
+npm start
+```
+
+# ENV
+
+- PORT
+- CAS_PASSWORD : if undefined, any password (even blank) will be allowed
+- NO_COOKIE : don't store cookie on the browser.
