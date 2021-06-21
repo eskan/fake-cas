@@ -27,9 +27,14 @@ app.get('/login', function(req, res) {
 });
 
 app.post('/login', bodyParser.urlencoded(), function(req, res) {
-  var cookie = uuid.v1();
-  cookies[cookie] = req.body.login;
-  res.cookie('fake-cas', cookie);
+  if (process.env.CAS_PASSWORD && req.body.password !== process.env.CAS_PASSWORD) {
+    return res.sendFile(process.cwd() + '/form.html');
+  }
+  if (process.env.NO_COOKIE === undefined) {
+    var cookie = uuid.v1();
+    cookies[cookie] = req.body.login;
+    res.cookie('fake-cas', cookie);
+  }
   if (req.query.service) {
     var ticket = "ST-" + uuid.v1();
     tickets[ticket] = req.body.login;

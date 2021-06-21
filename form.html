@@ -24,7 +24,7 @@
         text-align: center;
         box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.2), 0 5px 5px 0 rgba(0, 0, 0, 0.24);
       }
-      #login {
+      .input {
         outline: 0;
         background: #f2f2f2;
         width: 100%;
@@ -97,7 +97,8 @@
         <h3>fake-cas</h3>
         <div id="prefered"></div>
         <form id="form" class="login-form" method="post">
-          <input type="text" id="login" name="login" placeholder="login">
+          <input class="input" type="text" id="login" name="login" placeholder="login">
+          <input class="input" type="password" id="password" name="password" placeholder="password">
           <button>Login</button>
         </form>
         <a href="#" id="addPreferedLogin">Add prefered login</a>

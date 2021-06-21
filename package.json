@@ -5,14 +5,15 @@
   "repository": {},
   "license": "MIT",
   "scripts": {
-    "start": "npm-run-all --parallel watch:server watch:build|pino-pretty",
-    "watch:build": "webpack --watch",
+    "start": "npm run build && npm-run-all --parallel watch:server watch:build|pino-pretty",
+    "watch:build": "cross-env NODE_ENV=development webpack --watch",
     "watch:server": "nodemon ./dist/app.js --watch ./dist",
-    "build": "webpack -p"
+    "build": "webpack"
   },
   "devDependencies": {
     "body-parser": "^1.19.0",
     "cookie-parser": "^1.4.5",
+    "cross-env": "^7.0.3",
     "express": "^4.17.1",
     "node-uuid": "^1.4.7",
     "request": "^2.88.2",
