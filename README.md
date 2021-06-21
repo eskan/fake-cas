@@ -11,7 +11,8 @@ Handle a simple and **fake** CAS Authentication SSO in V1 with :
 Prefered login can be persist in localStorage
 
 ```
-babel-node server.js
+npm i
+npm run start
 ```
 
 # Development
