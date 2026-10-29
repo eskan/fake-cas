@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta
       name="viewport"
-      content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=no"
+      content="width=device-width, initial-scale=1.0"
     />
     <title>FAKE CAS</title>
   </head>
@@ -105,8 +105,8 @@
       <div class="form">
         <div id="prefered"></div>
         <form id="form" class="login-form" method="post">
-          <input class="input" type="text" id="login" name="login" placeholder="login">
-          <input class="input" type="password" id="password" name="password" placeholder="password">
+          <input class="input" type="text" id="login" name="login" placeholder="login" aria-label="Login" autocomplete="username" required>
+          <input class="input" type="password" id="password" name="password" placeholder="password" aria-label="Password" autocomplete="current-password">
           <button>Login</button>
         </form>
         <a href="#" id="addPreferedLogin">Add prefered login</a>
@@ -118,7 +118,7 @@
         element.innerText = login;
         element.onclick = function () {
           document.getElementById("login").value = login;
-          document.getElementById("form").submit();
+          document.getElementById("form").requestSubmit();
         };
         var suppBtn = document.createElement("input");
         suppBtn.type = "button";
