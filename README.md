@@ -8,15 +8,14 @@ this is a simulator, not a production authentication server.
 
 ## Run with Docker
 
-After the first successful GitHub Actions publication, run the image from
-GitHub Container Registry (GHCR), without installing Node.js or cloning the repository:
+Start the server with Docker:
 
 ```sh
 docker run --rm --name fake-cas -p 3000:3000 ghcr.io/eskan/fake-cas:latest
 ```
 
 Open http://localhost:3000/login. Favourite logins are saved in the browser's
-localStorage, using the existing storage key.
+localStorage.
 
 The image supports `linux/amd64` and `linux/arm64`; Docker selects the matching
 architecture automatically. Tickets and sessions are stored in memory and lost
@@ -38,8 +37,7 @@ To update, stop the running container and pull the image before starting it agai
 docker pull ghcr.io/eskan/fake-cas:latest
 ```
 
-For repeatable integrations, replace `latest` with a published version tag
-(for example `v1.2.3`, once that tag has been built) or a `sha-...` tag from GHCR.
+For repeatable integrations, replace `latest` with a specific available image tag.
 
 ### Docker Compose
 
@@ -61,6 +59,56 @@ When your CAS client also runs in Docker, validation can use the Compose service
 hostname `http://fake-cas:3000/validate`. Browser redirects must use URLs reachable
 from the browser, such as `http://localhost:3000/login` and your application's
 public callback URL. Always pass the exact same `service` value to login and validation.
+
+## Run locally
+
+Requires Node.js 24.12 or newer and npm.
+
+```sh
+git clone https://github.com/eskan/fake-cas.git
+cd fake-cas
+npm ci
+npm start
+```
+
+If you use nvm, run `nvm install` and `nvm use` in the project directory to
+select the Node.js version from `.nvmrc`.
+
+Open http://localhost:3000/login. Stop the server with `Ctrl+C`.
+Tickets and sessions are stored in memory and lost when the server restarts.
+
+Environment variables also apply when running locally. For example, in a
+POSIX shell (Linux or macOS):
+
+```sh
+CAS_PASSWORD=secret PORT=3001 npm start
+NO_COOKIE=1 npm start
+```
+
+## Development
+
+After installing dependencies with `npm ci`, start the server in watch mode:
+
+```sh
+npm run dev
+```
+
+Changes to the server code restart it automatically. Refresh the browser after
+editing `form.html` or `already.html` to see the updated pages. No compilation
+step is required.
+
+Run the integration tests with:
+
+```sh
+npm test
+```
+
+To build and try a Docker image from your local source:
+
+```sh
+docker build -t fake-cas .
+docker run --rm -p 3000:3000 fake-cas
+```
 
 ## Configuration
 
@@ -99,58 +147,7 @@ there is no session. `renew` takes precedence over `gateway`.
 Only the CAS 1.0 endpoints `/login`, `/logout` and `/validate` are implemented.
 CAS 2/3 XML validation, proxy tickets and single logout callbacks are not supported.
 
-## Build and publish with GitHub Actions
-
-[The Docker image workflow](.github/workflows/docker.yml) runs the tests and
-builds both architectures using the repository's Dockerfile:
-
-| Trigger | Result |
-| --- | --- |
-| Pull request targeting `master` | Tests and image build, without publication |
-| Push to `master` | Publish `ghcr.io/eskan/fake-cas:latest` and `sha-...` |
-| Push a `v*` tag, such as `v1.2.3` | Publish that exact tag and `sha-...`; keep `latest` unchanged |
-| Manual run from the Actions tab | Publish when run on `master` or a `v*` tag; otherwise only build and test |
-
-Publication uses the automatic `GITHUB_TOKEN` with `packages: write`; no registry
-secret needs to be configured. The image name follows the GitHub repository name,
-so forks publish under their own owner.
-
-After the first publication, open the package settings on GitHub and set its
-visibility to **Public** to allow anonymous pulls. If you keep the package private,
-log in to `ghcr.io` with a GitHub personal access token (classic) with
-`read:packages` before pulling. If a package already exists, ensure this repository
-has write access under the package's Actions access settings.
-
-See [GitHub's container publishing documentation](https://docs.github.com/en/actions/tutorials/publish-packages/publish-docker-images).
-
-### Build locally
-
-```sh
-docker build -t fake-cas .
-docker run --rm -p 3000:3000 fake-cas
-```
-
-## Local development
-
-Requires Node.js 24.12 or newer (`nvm use` selects Node.js 24).
-
-```sh
-npm ci
-npm start
-npm run dev # Restart automatically when server code changes
-npm test    # HTTP integration tests using Node's built-in test runner
-```
-
-No build step is needed. The server is plain JavaScript with Express and cookie-parser.
-
-## Updating an older checkout
-
-Run `npm ci` with Node.js 24.12 or newer. `npm start` now launches the server
-directly; use `npm run dev` for watch mode. Webpack, TypeScript and the `dist/`
-bundle are no longer used, and `npm run build` has been removed. Replace references
-to `amd64.Dockerfile` or `arm64v8.Dockerfile` with `Dockerfile`.
-
-Clients that previously validated tickets without `service` must now include it.
-Empty usernames are rejected, and an incorrect configured password returns HTTP 401.
+Empty usernames are rejected. When `CAS_PASSWORD` is configured, an incorrect
+password returns HTTP 401.
 
 Protocol reference: [Apereo CAS specification](https://apereo.github.io/cas/development/protocol/CAS-Protocol-Specification.html).
